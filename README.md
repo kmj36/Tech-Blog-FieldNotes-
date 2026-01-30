@@ -40,3 +40,13 @@ docker-compose up -d
 | DB_USER | DB 유저 | app |
 | DB_PASSWORD | DB 비밀번호 | secret |
 | JWT_SECRET | JWT 시크릿 키 | xxxx | 
+
+# Directory
+```bash
+```
+
+# API Specs
+- Swagger URL
+```bash
+http://localhost:8080/swagger-ui.html
+```
