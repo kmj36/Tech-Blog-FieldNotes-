@@ -7,9 +7,14 @@
 *.dll
 *.so
 *.dylib
+*.out
+/bin/
+/dist/
 
 # Test binary, built with `go test -c`
 *.test
+*.cover
+coverage.out
 
 # Code coverage profiles and other test artifacts
 *.out
@@ -30,3 +35,7 @@ go.work.sum
 # Editor/IDE
 .idea/
 .vscode/
+*.swp
+
+# OS
+.DS_Store
