@@ -1,0 +1,15 @@
+CREATE TYPE account_status AS ENUM ('ACTIVE','SUSPENDED');
+
+CREATE TYPE account_role AS ENUM ('USER','ADMIN');
+
+CREATE TABLE accounts (
+  id SMALLINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+  account_id VARCHAR(255) NOT NULL UNIQUE,
+  password_hash TEXT NOT NULL,
+  nickname VARCHAR(255) NOT NULL UNIQUE,
+  avatar_url VARCHAR(2048),
+  role account_role NOT NULL DEFAULT 'USER',
+  status account_status NOT NULL DEFAULT 'ACTIVE',
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
