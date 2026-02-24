@@ -17,6 +17,8 @@ services:
     env_file:
       - .env
     environment:
+      TZ: ${DB_TIMEZONE}
+      PGSSLMODE: ${DB_SSLMODE}
       POSTGRES_DB: ${DB_DATABASE}
       POSTGRES_USER: ${DB_USER}
       POSTGRES_PASSWORD: ${DB_PASSWORD}

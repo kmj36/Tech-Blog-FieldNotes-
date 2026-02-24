@@ -6,18 +6,21 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/kmj36/fieldnotes-tech-blog/internal/handler"
 	"github.com/kmj36/fieldnotes-tech-blog/pkg/validator"
+	"gorm.io/gorm"
 )
 
 type App struct {
 	router *gin.Engine
 	pingHandler *handler.PingHandler
+	db *gorm.DB
 }
 
 // app 패키지 생성자(constructor) App 객체 반환
-func New() *App {
+func New(db *gorm.DB) *App {
 	return &App{
 		router: gin.Default(),
 		pingHandler: handler.NewPingHandler(),
+		db: db,
 	}
 }
 
@@ -31,7 +34,8 @@ func (app *App) setupRoutes() {
 
 	/*api := app.router.Group("/api/v1")
 	{
-		handler 연결
+		userRepo := repository.NewUserRepository(app.db)
+		userService := service.NewUserService(userRepo)
         userHandler := handler.NewUserHandler(userService)
         api.GET("/users/:id", userHandler.GetUser)
 	}*/
