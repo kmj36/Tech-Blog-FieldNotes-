@@ -21,9 +21,9 @@ func main() {
 		log.Fatal(err)
 	}
 
-	backendApp := app.New(db)
+	backendApp := app.New(db, cfg.ApiMode)
 
-	if err := backendApp.Run(cfg.ServerAddr); err != nil {
+	if err := backendApp.Run(cfg); err != nil {
 		log.Fatal(err)
 	}
 }

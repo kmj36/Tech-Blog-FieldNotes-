@@ -19,6 +19,9 @@ type DBConfig struct {
 type Config struct {
 	DB DBConfig
 	ServerAddr string
+	ApiMode string
+	ProductionDomain string
+	TestDomain string
 }
 
 // 사전 설정 호출
@@ -27,6 +30,9 @@ func Load() *Config {
 	
 	cfg := &Config{
 		ServerAddr: os.Getenv("API_ADDR") + ":" + os.Getenv("API_PORT"),
+		ApiMode: os.Getenv("API_MODE"),
+		ProductionDomain: os.Getenv("API_PRODUCTION_DOMAIN_CORS"),
+		TestDomain: os.Getenv("API_TEST_DOMAIN_CORS"),
 		DB: DBConfig{
 			Host : os.Getenv("DB_HOST"),
 			Port : os.Getenv("DB_PORT"),
