@@ -6,6 +6,7 @@ import (
 	"github.com/joho/godotenv"
 )
 
+// DB 관련 설정값 구조체
 type DBConfig struct {
 	Host string
 	Port string
@@ -16,6 +17,7 @@ type DBConfig struct {
 	TimeZone string
 }
 
+// API 관련 설정값 구조체
 type Config struct {
 	DB DBConfig
 	ServerAddr string

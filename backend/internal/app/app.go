@@ -11,6 +11,7 @@ import (
 	"gorm.io/gorm"
 )
 
+// gin app 패키지
 type App struct {
 	router *gin.Engine
 	pingHandler *handler.PingHandler
@@ -19,7 +20,7 @@ type App struct {
 
 // app 패키지 생성자(constructor) App 객체 반환
 func New(db *gorm.DB, runMode string) *App {
-	gin.SetMode(runMode)
+	gin.SetMode(runMode) // 서버 다중 실행 구조로 변경 시 main.go로 이동
 
 	return &App{
 		router: gin.Default(),
@@ -59,5 +60,5 @@ func (app *App) Run(cfg *configs.Config) error {
 
 	fmt.Println("Server started")
 	app.router.Run(cfg.ServerAddr)
-	return nil
+	return nil // [TODO] return app.router.Run(cfg.ServerAddr)
 }
