@@ -23,7 +23,7 @@ func New(db *gorm.DB, runMode string) *App {
 	gin.SetMode(runMode) // 서버 다중 실행 구조로 변경 시 main.go로 이동
 
 	return &App{
-		router: gin.Default(),
+		router: gin.New(),
 		pingHandler: handler.NewPingHandler(),
 		db: db,
 	}
@@ -33,6 +33,10 @@ func New(db *gorm.DB, runMode string) *App {
 func (app *App) setupMiddleware(cfg *configs.Config) {
 	// CORS 미들웨어 핸들러
 	app.router.Use(middleware.CORSHandler(cfg))
+
+	// Zap Logger 미들웨어 핸들러
+	app.router.Use(middleware.ZapLoggerHandler())
+	app.router.Use(middleware.ZapRecoveryHandler())
 }
 
 // App 객체 메소드 - Gin 라우팅 설정
