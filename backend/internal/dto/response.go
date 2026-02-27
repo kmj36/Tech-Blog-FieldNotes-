@@ -10,13 +10,14 @@ type AppError struct {
 }
 
 // 루트 기본 필드
-type CommonResponse struct {
+type CommonResponse[T any] struct {
 	Status    int       `json:"status"`
     Code      string    `json:"code"`
     Detail    string    `json:"detail"`
     Message   string    `json:"message"`
     Timestamp time.Time `json:"timestamp"`
     Path      string    `json:"path"`
+    Result    T         `json:"result,omitempty"` // 결과 obj 선택 필드
 }
 
 // 에러 공통 리터럴
