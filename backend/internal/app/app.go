@@ -35,6 +35,15 @@ func (app *App) setupMiddleware(cfg *configs.Config) {
 	app.router.Use(middleware.CORSHandler(cfg))
 }
 
+// App 객체 메소드 - NoRoute, NoMethod 핸들러 설정
+func (app *App) setupErrors() {
+	// 404 에러 핸들링 - 정의되지 않은 라우트 처리
+	app.router.NoRoute(handler.NoRoute())
+
+	// 405 에러 핸들링 - 정의되지 않은 메소드 처리
+	app.router.NoMethod(handler.NoMethod())
+}
+
 // App 객체 메소드 - Gin 라우팅 설정
 func (app *App) setupRoutes() {
 	// 기본 라우트
@@ -56,6 +65,7 @@ func (app *App) Run(cfg *configs.Config) error {
 	}
 
 	app.setupMiddleware(cfg)
+	app.setupErrors()
 	app.setupRoutes()
 
 	fmt.Println("Server started")
