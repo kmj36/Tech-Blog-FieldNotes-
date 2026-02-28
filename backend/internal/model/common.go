@@ -1,4 +1,4 @@
-package dto
+package model
 
 import "time"
 
@@ -18,6 +18,11 @@ type CommonResponse[T any] struct {
     Timestamp time.Time `json:"timestamp"`
     Path      string    `json:"path"`
     Result    T         `json:"result,omitempty"` // 결과 obj 선택 필드
+}
+
+// Update 작업 변경 필드
+type CommonUpdateDiff struct {
+    ChangedFields []string		`json:"changed_fields"`
 }
 
 // 에러 공통 리터럴
