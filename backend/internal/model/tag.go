@@ -51,7 +51,7 @@ type ReadTagsResponse struct {
 				Search		string		`json:"search"`
 			}
 		}	`json:"meta"`
-		Data		[]ReadTagResponse	`json:""`
+		Data		[]ReadTagResponse	`json:"data"`
 	}	`json:"result"`
 }
 
