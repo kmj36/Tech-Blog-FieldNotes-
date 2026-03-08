@@ -24,6 +24,7 @@ type Config struct {
 	ApiMode string
 	ProductionDomain string
 	TestDomain string
+	JWTSecret []byte
 }
 
 // 사전 설정 호출
@@ -35,6 +36,7 @@ func Load() *Config {
 		ApiMode: os.Getenv("API_MODE"),
 		ProductionDomain: os.Getenv("API_PRODUCTION_DOMAIN_CORS"),
 		TestDomain: os.Getenv("API_TEST_DOMAIN_CORS"),
+		JWTSecret: []byte(os.Getenv("API_JWT_SECRET")),
 		DB: DBConfig{
 			Host : os.Getenv("DB_HOST"),
 			Port : os.Getenv("DB_PORT"),

@@ -2,11 +2,14 @@ package app
 
 import (
 	"fmt"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/kmj36/fieldnotes-tech-blog/configs"
 	"github.com/kmj36/fieldnotes-tech-blog/internal/handler"
+	"github.com/kmj36/fieldnotes-tech-blog/internal/handler/response"
 	"github.com/kmj36/fieldnotes-tech-blog/internal/middleware"
+	"github.com/kmj36/fieldnotes-tech-blog/pkg/cryption"
 	"github.com/kmj36/fieldnotes-tech-blog/pkg/validator"
 	"gorm.io/gorm"
 )
@@ -42,17 +45,27 @@ func (app *App) setupMiddleware(cfg *configs.Config) {
 // App 객체 메소드 - NoRoute, NoMethod 핸들러 설정
 func (app *App) setupErrors() {
 	// 404 에러 핸들링 - 정의되지 않은 라우트 처리
-	app.router.NoRoute(handler.NoRoute())
+	app.router.NoRoute(response.NoRoute())
 
 	// 405 에러 핸들링 - 정의되지 않은 메소드 처리
-	app.router.NoMethod(handler.NoMethod())
+	app.router.NoMethod(response.NoMethod())
 }
 
 // App 객체 메소드 - Gin 라우팅 설정
-func (app *App) setupRoutes() {
-	// 기본 라우트
-	app.router.GET("/ping", app.pingHandler.Ping)
+func (app *App) setupRoutes(cfg *configs.Config) {
 
+	// 테스트 라우트
+	app.router.GET("/ping", app.pingHandler.Ping)
+	
+	// 인증 라우트
+	jwtmanager := cryption.NewJWTManager(cfg.JWTSecret, 24*time.Hour)
+	auth := app.router.Group("/api/v1")
+	{
+		auth.Use(middleware.JWTAuthMiddleware(jwtmanager))
+	}
+	
+	
+	// 기본 라우트
 	/*api := app.router.Group("/api/v1")
 	{
 		userRepo := repository.NewUserRepository(app.db)
@@ -70,7 +83,7 @@ func (app *App) Run(cfg *configs.Config) error {
 
 	app.setupMiddleware(cfg)
 	app.setupErrors()
-	app.setupRoutes()
+	app.setupRoutes(cfg)
 
 	fmt.Println("Server started")
 	app.router.Run(cfg.ServerAddr)
