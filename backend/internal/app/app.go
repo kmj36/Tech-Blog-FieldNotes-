@@ -1,91 +1,94 @@
 package app
 
 import (
-	"fmt"
 	"time"
 
 	"github.com/gin-gonic/gin"
-	"github.com/kmj36/fieldnotes-tech-blog/configs"
+	"github.com/kmj36/fieldnotes-tech-blog/internal/config"
 	"github.com/kmj36/fieldnotes-tech-blog/internal/handler"
 	"github.com/kmj36/fieldnotes-tech-blog/internal/handler/response"
 	"github.com/kmj36/fieldnotes-tech-blog/internal/middleware"
 	"github.com/kmj36/fieldnotes-tech-blog/pkg/cryption"
-	"github.com/kmj36/fieldnotes-tech-blog/pkg/validator"
+	"github.com/kmj36/fieldnotes-tech-blog/pkg/logger"
+	"go.uber.org/zap"
 	"gorm.io/gorm"
 )
 
 // gin app 패키지
 type App struct {
-	router *gin.Engine
+	router 		*gin.Engine
+	logger		*zap.Logger
+
+	cfg 		*config.Config
+
 	pingHandler *handler.PingHandler
-	db *gorm.DB
+	jwtManager 	*cryption.JWTManager
+
+	db 			*gorm.DB
 }
 
-// app 패키지 생성자(constructor) App 객체 반환
-func New(db *gorm.DB, runMode string) *App {
-	gin.SetMode(runMode) // 서버 다중 실행 구조로 변경 시 main.go로 이동
+// app 패키지 생성자
+func New(db *gorm.DB, cfg *config.Config, log *zap.Logger) *App {
+	gin.SetMode(cfg.ApiMode)
+
+	//userRepo := repository.NewUserRepository(db)
+    //userService := service.NewUserService(userRepo)
 
 	return &App{
 		router: gin.New(),
+		logger: log,
+		cfg: cfg,
 		pingHandler: handler.NewPingHandler(),
+		//userHandler: handler.NewUserHandler(userService),
+		jwtManager: cryption.NewJWTManager(cfg.JWTSecret, cfg.JWTExpiry),
 		db: db,
 	}
 }
 
-// App 객체 메소드 - 미들웨어 핸들러 등록
-func (app *App) setupMiddleware(cfg *configs.Config) {
-	// CORS 미들웨어 핸들러
-	app.router.Use(middleware.CORSHandler(cfg))
+// App 객체 메소드 - Gin 실행 함수
+func (app *App) Run() error {
+	app.setupErrors() /* . */
+	app.setupMiddleware() /* . */
+	app.setupRoutes() /* . */
 
-	// Zap Logger 미들웨어 핸들러
-	app.router.Use(middleware.ZapLoggerHandler())
-	app.router.Use(middleware.ZapRecoveryHandler())
+	app.logger.Info("API Server started")
+	return app.router.Run(app.cfg.ServerAddr)
 }
 
 // App 객체 메소드 - NoRoute, NoMethod 핸들러 설정
 func (app *App) setupErrors() {
 	// 404 에러 핸들링 - 정의되지 않은 라우트 처리
-	app.router.NoRoute(response.NoRoute())
+	app.router.NoRoute(response.NoRoute()) /* . */
 
 	// 405 에러 핸들링 - 정의되지 않은 메소드 처리
-	app.router.NoMethod(response.NoMethod())
+	app.router.NoMethod(response.NoMethod()) /* . */
+}
+
+// App 객체 메소드 - 미들웨어 핸들러 등록
+func (app *App) setupMiddleware() {
+	// CORS 미들웨어 핸들러
+	app.router.Use(middleware.CORSHandler(app.cfg)) /* . */
+
+	// Zap Logger 미들웨어 핸들러
+	app.router.Use(logger.ZapLoggerHandler(app.logger, time.RFC3339, true)) /* . */
+	app.router.Use(logger.ZapRecoveryHandler(app.logger, true)) /* . */
 }
 
 // App 객체 메소드 - Gin 라우팅 설정
-func (app *App) setupRoutes(cfg *configs.Config) {
+func (app *App) setupRoutes() {
 
 	// 테스트 라우트
 	app.router.GET("/ping", app.pingHandler.Ping)
 	
 	// 인증 라우트
-	jwtmanager := cryption.NewJWTManager(cfg.JWTSecret, 24*time.Hour)
 	auth := app.router.Group("/api/v1")
 	{
-		auth.Use(middleware.JWTAuthMiddleware(jwtmanager))
+		auth.Use(middleware.JWTAuthMiddleware(app.jwtManager))
 	}
-	
 	
 	// 기본 라우트
 	/*api := app.router.Group("/api/v1")
 	{
-		userRepo := repository.NewUserRepository(app.db)
-		userService := service.NewUserService(userRepo)
-        userHandler := handler.NewUserHandler(userService)
         api.GET("/users/:id", userHandler.GetUser)
 	}*/
-}
-
-// App 객체 메소드 - Gin 실행 함수
-func (app *App) Run(cfg *configs.Config) error {
-	if err := validator.ValidateAddr(cfg.ServerAddr); err != nil {
-		return err
-	}
-
-	app.setupMiddleware(cfg)
-	app.setupErrors()
-	app.setupRoutes(cfg)
-
-	fmt.Println("Server started")
-	app.router.Run(cfg.ServerAddr)
-	return nil // [TODO] return app.router.Run(cfg.ServerAddr)
 }

@@ -3,24 +3,23 @@ package database
 import (
 	"fmt"
 
-	"github.com/kmj36/fieldnotes-tech-blog/configs"
+	"github.com/kmj36/fieldnotes-tech-blog/internal/config"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
 
-func NewPostgresDSN(dbCfg configs.DBConfig) string {
-	return fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s sslmode=%s TimeZone=%s",
-		dbCfg.Host,
-		dbCfg.User,
-		dbCfg.Password,
-		dbCfg.DBName,
-		dbCfg.Port,
-		dbCfg.SSLMode,
-		dbCfg.TimeZone,
-	)
-}
+func NewPostgresDB(Cfg config.DBConfig) (*gorm.DB, error) {
 
-func NewPostgresDB(dsn string) (*gorm.DB, error) {
+	dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s sslmode=%s TimeZone=%s",
+		Cfg.Host,
+		Cfg.User,
+		Cfg.Password,
+		Cfg.DBName,
+		Cfg.Port,
+		Cfg.SSLMode,
+		Cfg.TimeZone,
+	)
+
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	if err != nil {
 		return nil, err
@@ -35,5 +34,5 @@ func NewPostgresDB(dsn string) (*gorm.DB, error) {
 		return nil, err
 	}
 
-	return db, err
+	return db, nil
 }

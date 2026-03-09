@@ -5,17 +5,17 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
-	"github.com/kmj36/fieldnotes-tech-blog/internal/model"
+	"github.com/kmj36/fieldnotes-tech-blog/internal/dto"
 )
 
 // 404 에러 핸들링 - 정의되지 않은 라우트 공통 처리, 비즈니스 핸들러 별도 404 에러
 func NoRoute() gin.HandlerFunc {
 	return func (ctx *gin.Context)  {
-		ctx.JSON(http.StatusNotFound, model.CommonResponse[any]{
-			Status: model.ErrNotFound.Status,
-			Code: model.ErrNotFound.Code,
+		ctx.AbortWithStatusJSON(http.StatusNotFound, dto.CommonResponse[any]{
+			Status: dto.ErrNotFound.Status,
+			Code: dto.ErrNotFound.Code,
 			Detail: ctx.Request.URL.Path + " resource not found.",
-			Message: model.ErrNotFound.Message,
+			Message: dto.ErrNotFound.Message,
 			Timestamp: time.Now().UTC(),
 			Path: ctx.Request.URL.Path,
 		})
@@ -25,11 +25,11 @@ func NoRoute() gin.HandlerFunc {
 // 405 에러 핸들링 - 정의되지 않은 메소드 처리
 func NoMethod() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
-		ctx.JSON(http.StatusMethodNotAllowed, model.CommonResponse[any]{
-			Status: model.ErrMethodNotAllowed.Status,
-			Code: model.ErrMethodNotAllowed.Code,
+		ctx.AbortWithStatusJSON(http.StatusMethodNotAllowed, dto.CommonResponse[any]{
+			Status: dto.ErrMethodNotAllowed.Status,
+			Code: dto.ErrMethodNotAllowed.Code,
 			Detail: ctx.Request.Method + " method not allowed.",
-			Message: model.ErrMethodNotAllowed.Message,
+			Message: dto.ErrMethodNotAllowed.Message,
 			Timestamp: time.Now().UTC(),
 			Path: ctx.Request.URL.Path,
 		})
