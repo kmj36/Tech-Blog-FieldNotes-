@@ -11,7 +11,7 @@ import (
 
 func main() {
 	// 사전 설정 호출
-	cfg, err := config.Load() /* . */
+	cfg, err := config.Load()
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -23,13 +23,13 @@ func main() {
 	}
 
 	// 데이터베이스 객체 생성
-	db, err := database.NewPostgresDB(cfg.DB) /* . */
+	db, err := database.NewPostgresDB(cfg.DB)
 	if err != nil {
 		logger.Fatal(err.Error())
 	}
 	
 	// App 생성
-	api := app.New(db, cfg, logger) /* . */
+	api := app.New(db, cfg, logger)
 
 	// API 실행
 	if err := api.Run(); err != nil {

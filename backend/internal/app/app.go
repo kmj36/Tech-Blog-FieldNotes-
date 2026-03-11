@@ -47,9 +47,9 @@ func New(db *gorm.DB, cfg *config.Config, log *zap.Logger) *App {
 
 // App 객체 메소드 - Gin 실행 함수
 func (app *App) Run() error {
-	app.setupErrors() /* . */
-	app.setupMiddleware() /* . */
-	app.setupRoutes() /* . */
+	app.setupMiddleware()
+	app.setupErrors()
+	app.setupRoutes()
 
 	app.logger.Info("API Server started")
 	return app.router.Run(app.cfg.ServerAddr)
@@ -58,20 +58,20 @@ func (app *App) Run() error {
 // App 객체 메소드 - NoRoute, NoMethod 핸들러 설정
 func (app *App) setupErrors() {
 	// 404 에러 핸들링 - 정의되지 않은 라우트 처리
-	app.router.NoRoute(response.NoRoute()) /* . */
+	app.router.NoRoute(response.NoRoute())
 
 	// 405 에러 핸들링 - 정의되지 않은 메소드 처리
-	app.router.NoMethod(response.NoMethod()) /* . */
+	app.router.NoMethod(response.NoMethod())
 }
 
 // App 객체 메소드 - 미들웨어 핸들러 등록
 func (app *App) setupMiddleware() {
-	// CORS 미들웨어 핸들러
-	app.router.Use(middleware.CORSHandler(app.cfg)) /* . */
-
 	// Zap Logger 미들웨어 핸들러
-	app.router.Use(logger.ZapLoggerHandler(app.logger, time.RFC3339, true)) /* . */
-	app.router.Use(logger.ZapRecoveryHandler(app.logger, true)) /* . */
+	app.router.Use(logger.ZapLoggerHandler(app.logger, time.RFC3339, true))
+	app.router.Use(logger.ZapRecoveryHandler(app.logger, true))
+
+	// CORS 미들웨어 핸들러
+	app.router.Use(middleware.CORSHandler(app.cfg))
 }
 
 // App 객체 메소드 - Gin 라우팅 설정
