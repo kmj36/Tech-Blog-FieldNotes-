@@ -11,7 +11,7 @@ import (
 const (
 	memory = 64 * 1024
 	iterations = 1
-	parallelism = 4
+	threads = 4
 	saltLength = 16
 	keyLength = 32
 )
@@ -33,7 +33,7 @@ func HashPassword(password string) (string, error) {
 		salt,
 		iterations,
 		memory,
-		parallelism,
+		threads,
 		keyLength,
 	)
 
@@ -55,7 +55,7 @@ func VerifyPassword(password, storedHash string) bool {
 		saltBytes,
 		iterations,
 		memory,
-		parallelism,
+		threads,
 		keyLength,
 	)
 

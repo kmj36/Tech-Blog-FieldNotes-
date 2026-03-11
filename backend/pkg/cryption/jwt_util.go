@@ -16,9 +16,11 @@ func NewJWTManager(secret []byte, expiry time.Duration) *JWTManager {
     return &JWTManager{secret: secret, expiry: expiry}
 }
 
-func (j *JWTManager) GenerateJWT(userID int) (string, error) {
+func (j *JWTManager) GenerateJWT(userID int, userAccount string, userNickName string) (string, error) {
 	claims := jwt.MapClaims{
-		"user_id": userID,
+		"sub": userID,
+		"user_account": userAccount,
+		"user_nickname": userNickName,
 		"exp": j.expiry,
 		"iat": time.Now().Unix(),
 	}
