@@ -11,7 +11,7 @@ import (
 // 404 에러 핸들링 - 정의되지 않은 라우트 공통 처리, 비즈니스 핸들러 별도 404 에러
 func NoRoute() gin.HandlerFunc {
 	return func (ctx *gin.Context)  {
-		ctx.AbortWithStatusJSON(http.StatusNotFound, dto.CommonResponse[any]{
+		ctx.AbortWithStatusJSON(http.StatusNotFound, dto.ResponseWrapper[any]{
 			Status: dto.ErrNotFound.Status,
 			Code: dto.ErrNotFound.Code,
 			Detail: ctx.Request.URL.Path + " resource not found.",
@@ -25,7 +25,7 @@ func NoRoute() gin.HandlerFunc {
 // 405 에러 핸들링 - 정의되지 않은 메소드 처리
 func NoMethod() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
-		ctx.AbortWithStatusJSON(http.StatusMethodNotAllowed, dto.CommonResponse[any]{
+		ctx.AbortWithStatusJSON(http.StatusMethodNotAllowed, dto.ResponseWrapper[any]{
 			Status: dto.ErrMethodNotAllowed.Status,
 			Code: dto.ErrMethodNotAllowed.Code,
 			Detail: ctx.Request.Method + " method not allowed.",

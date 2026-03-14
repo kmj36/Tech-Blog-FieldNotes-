@@ -20,7 +20,7 @@ func JWTAuthMiddleware(jwtmanager *cryption.JWTManager) gin.HandlerFunc {
 		token, err := jwtmanager.ValidateJWT(tokenString)
 
 		if authHeader == "" || !token.Valid || err != nil {
-			ctx.JSON(http.StatusUnauthorized, dto.CommonResponse[any]{
+			ctx.JSON(http.StatusUnauthorized, dto.ResponseWrapper[any]{
 				Status: http.StatusUnauthorized,
 				Code: "E401_001",
 				Message: "인증에 실패하였습니다.",

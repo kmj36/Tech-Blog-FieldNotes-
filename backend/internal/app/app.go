@@ -8,6 +8,8 @@ import (
 	"github.com/kmj36/fieldnotes-tech-blog/internal/handler"
 	"github.com/kmj36/fieldnotes-tech-blog/internal/handler/response"
 	"github.com/kmj36/fieldnotes-tech-blog/internal/middleware"
+	"github.com/kmj36/fieldnotes-tech-blog/internal/repository"
+	"github.com/kmj36/fieldnotes-tech-blog/internal/service"
 	"github.com/kmj36/fieldnotes-tech-blog/pkg/cryption"
 	"github.com/kmj36/fieldnotes-tech-blog/pkg/logger"
 	"go.uber.org/zap"
@@ -22,6 +24,8 @@ type App struct {
 	cfg 		*config.Config
 
 	pingHandler *handler.PingHandler
+	accountHandler *handler.AccountHandler
+
 	jwtManager 	*cryption.JWTManager
 
 	db 			*gorm.DB
@@ -31,15 +35,17 @@ type App struct {
 func New(db *gorm.DB, cfg *config.Config, log *zap.Logger) *App {
 	gin.SetMode(cfg.ApiMode)
 
-	//userRepo := repository.NewUserRepository(db)
-    //userService := service.NewUserService(userRepo)
+	accountRepo := repository.NewAccountRepository(db)
+	accountService := service.NewAccountService(accountRepo)
 
 	return &App{
 		router: gin.New(),
 		logger: log,
 		cfg: cfg,
+		
 		pingHandler: handler.NewPingHandler(),
-		//userHandler: handler.NewUserHandler(userService),
+		accountHandler: handler.NewAccountHandler(accountService),
+
 		jwtManager: cryption.NewJWTManager(cfg.JWTSecret, cfg.JWTExpiry),
 		db: db,
 	}
@@ -79,6 +85,7 @@ func (app *App) setupRoutes() {
 
 	// 테스트 라우트
 	app.router.GET("/ping", app.pingHandler.Ping)
+	app.router.POST("/auth/register", app.accountHandler.Create)
 	
 	// 인증 라우트
 	auth := app.router.Group("/api/v1")

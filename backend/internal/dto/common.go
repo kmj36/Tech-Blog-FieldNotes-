@@ -1,6 +1,9 @@
 package dto
 
-import "time"
+import (
+	"errors"
+	"time"
+)
 
 // 앱 에러 정의
 type AppError struct {
@@ -10,7 +13,7 @@ type AppError struct {
 }
 
 // 루트 기본 필드
-type CommonResponse[T any] struct {
+type ResponseWrapper[T any] struct {
 	Status    int       `json:"status"`
     Code      string    `json:"code"`
     Detail    string    `json:"detail"`
@@ -24,6 +27,8 @@ type CommonResponse[T any] struct {
 type CommonUpdateDiff struct {
     ChangedFields []string		`json:"changed_fields"`
 }
+
+var ErrAccountAlreadyExists = errors.New("account already exists")
 
 // 에러 공통 리터럴
 var ( 
